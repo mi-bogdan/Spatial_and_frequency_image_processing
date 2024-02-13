@@ -187,7 +187,7 @@ class Forma(QWidget):
         img_contrast.save('cache/cache.jpg')
 
         pixmap = QPixmap('cache/cache.jpg')
-    
+
         self.label_img_2.setPixmap(pixmap.scaled(
             self.label_img_2.size(), Qt.KeepAspectRatio))
 
@@ -195,6 +195,7 @@ class Forma(QWidget):
 
         # Генерация и отображение гистограммы оригинального изображения
         plt.subplot(1, 2, 1)
+        # Для каждого изображения считаются значения гистограммы по плоско развернутому массиву пикселей (flatten())
         plt.hist(np.array(img.convert('L')).flatten(), bins=256, range=(
             0, 256), alpha=0.75, color='blue', label='Original')
         plt.legend()
@@ -251,13 +252,14 @@ class Forma(QWidget):
         pixmap = QPixmap(self.imagePath)
         self.label_img_2.setPixmap(pixmap)
 
-        # Получаем данные о гистограмме яркости пикселей
+        # Возвращает гистограмму, которая представляет собой список, частота каждого значения яркости от 0 до 255.
         histogram = gray_image.histogram()
         # Разделяем данные гистограммы на красный цвет
         histogram_red = histogram[0:256]
 
         # Строим гистограмму яркости
         plt.figure(figsize=(8, 5))
+        # Строится столбчатая гистограмма (ось X) значения яркости от 0 до 255, (ось Y) — частоту каждого уровня яркости в изображении
         plt.bar(range(256), histogram_red, color='red')
         plt.ylabel('Частота')
         plt.xlabel('Яркость')
