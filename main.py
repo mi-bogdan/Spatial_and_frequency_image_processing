@@ -181,14 +181,13 @@ class Forma(QWidget):
 
     def normalize_histogram(self):
         """Контрастная нормализация гистограммы"""
-        img = Image.open(self.imagePath)  # Загрузка оригинального изображения
+        img = Image.open(self.imagePath)
         # Применение нормализации гистограммы
         img_contrast = ImageOps.equalize(img)
         img_contrast.save('cache/cache.jpg')
 
-        # Так как изображение уже сохранено, pixmap можно создать из img_contrast напрямую
         pixmap = QPixmap('cache/cache.jpg')
-        # Предполагаем, что масштабирование может быть нужно
+    
         self.label_img_2.setPixmap(pixmap.scaled(
             self.label_img_2.size(), Qt.KeepAspectRatio))
 
