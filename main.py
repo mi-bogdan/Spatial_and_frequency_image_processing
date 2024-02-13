@@ -2,15 +2,14 @@ import shutil
 import sys
 import numpy as np
 
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtWidgets import QApplication, QPushButton, QFileDialog, QWidget, QSlider, QSizePolicy, QMessageBox
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtWidgets import QApplication,  QFileDialog, QWidget, QMessageBox
+from PyQt5.QtGui import QPixmap
+
 from PyQt5.QtCore import Qt, QRect
 
 from widget.helpers import UIHelpers
 
-
-from PIL import Image, ImageFilter, ImageDraw, ImageEnhance, ImageCms, ImageOps
+from PIL import Image, ImageFilter, ImageCms, ImageOps
 import matplotlib.pyplot as plt
 
 
@@ -177,6 +176,9 @@ class Forma(QWidget):
         )
 
         # --------------------------------------------------------------------------------------------------------------------------------------------
+
+        # ---------------------------------------------------------------------------------------------------------------------------------------------
+
     def normalize_histogram(self):
         """Контрастная нормализация гистограммы"""
         img = Image.open(self.imagePath)  # Загрузка оригинального изображения
@@ -254,8 +256,6 @@ class Forma(QWidget):
         histogram = gray_image.histogram()
         # Разделяем данные гистограммы на красный цвет
         histogram_red = histogram[0:256]
-        # histogram_green = histogram[256:512]
-        # histogram_blue = histogram[512:768]
 
         # Строим гистограмму яркости
         plt.figure(figsize=(8, 5))
@@ -279,13 +279,28 @@ class Forma(QWidget):
         image = Image.open(self.imagePath)
 
         # Конвертируем изображение в цветовую схему Lab
-        lab_image = image.convert("LAB", colors=ImageCms.createProfile("LAB"))
-        lab_image.save('cache/lab_image.tif')
+        if image.mode == "L":
+            self.showMessage()
+            return
+        else:
+            lab_image = image.convert(
+                "LAB", colors=ImageCms.createProfile("LAB"))
+            lab_image.save('cache/lab_image.tif')
 
         # Отображаем исходное и конвертированное изображение
         pixmap_lab = QPixmap('cache/lab_image.tif')
         self.label_img_2.setPixmap(pixmap_lab)
         self.saveImage()
+
+    def showMessage(self):
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setText("Уберите серый фильтр!")
+        msgBox.setWindowTitle("Информирование")
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        returnValue = msgBox.exec()
+        if returnValue == QMessageBox.Ok:
+            print('OK')
 
     def original(self):
         """Загрузка оригинальной фото в label"""
@@ -316,7 +331,7 @@ class Forma(QWidget):
         if self.imagePath:
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
-            fileName, _ = QFileDialog.getSaveFileName(self, "Сохранить изображение", "new_photo",
+            fileName, _ = QFileDialog.getSaveFileName(self, "Сохранить изображение", "new_photo.jpg",
                                                       "Image Files (*.png *.jpg *.jpeg *.bmp *.tif)",
                                                       options=options)
             if fileName:
