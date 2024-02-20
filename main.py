@@ -85,8 +85,10 @@ class Forma(QWidget):
         )
         self.line_edit_crop_x = UIHelpers.createLineEdit(
             self, 745, 210, 'X')
+        self.line_edit_crop_x.setText('0')
         self.line_edit_crop_y = UIHelpers.createLineEdit(
             self, 745, 240, 'Y')
+        self.line_edit_crop_y.setText('0')
         self.line_edit_crop_x_width = UIHelpers.createLineEdit(
             self, 745, 270, 'Ширина')
         self.line_edit_crop_y_height = UIHelpers.createLineEdit(
